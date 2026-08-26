@@ -1,0 +1,51 @@
+---
+// BaseLayout.astro — 基础布局
+// 用法：<BaseLayout title="页面标题"> ... </BaseLayout>
+
+import "../assets/css/global.css";
+import NavBar from "../components/layout/NavBar.astro";
+import Footer from "../components/layout/Footer.astro";
+import { site } from "../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = site.description,
+} = Astro.props;
+
+const pageTitle = title ? `${title} - ${site.name}` : site.name;
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content={site.colorScheme} />
+    <title>{pageTitle}</title>
+    <slot name="head" />
+  </head>
+  <body>
+
+    <div class="bg-layer" aria-hidden="true"></div>
+    <div class="page">
+      <NavBar />
+      <main class="hero transition-main" id="swup">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: #060912; }
+  .page { min-height: 100svh; height: auto; }
+  .bg-layer { background: linear-gradient(180deg, rgba(4, 7, 13, .26), rgba(4, 7, 13, .73)), url('https://images.unsplash.com/photo-1522124624696-7ea32eb9592c?auto=format&fit=crop&w=2400&q=82') center / cover no-repeat; }
+  .bg-layer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, rgba(3, 5, 10, .54), transparent 56%), linear-gradient(0deg, rgba(3, 5, 10, .65), transparent 36%); }
+</style>

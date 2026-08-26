@@ -1,0 +1,148 @@
+/* ========================================
+ * global.css — 全局样式
+ * ======================================== */
+@import "./variables.css";
+@import "./utilities.css";
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 全站链接 hover 效果：文字周围出现柔和光晕，类似按钮 */
+a:not(.glass-btn):not(.nav-logo):not(.nav-links a):not(.mobile-link):not(.project-card):not(.action-card):not(.hero-card) {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 1px 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+a:not(.glass-btn):not(.nav-logo):not(.nav-links a):not(.mobile-link):not(.action-card)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+
+}
+
+a:not(.glass-btn):not(.nav-logo):not(.nav-links a):not(.mobile-link):hover::before {
+  opacity: 1;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* 页面外壳 */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+}
+
+/* 背景 */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 主内容区 */
+.hero {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 96px 0 48px;
+  position: relative;
+}
+
+/* 手机端内边距 */
+@media (max-width: 640px) {
+  .hero { padding: 80px 0 40px; }
+}
+
+/* 电脑端内边距 */
+@media (min-width: 1024px) {
+  .hero { padding: 120px 0 80px; }
+}
+
+/* ---- Swup 页面切换动画 ---- */
+
+#swup.transition-main {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+html:not(.is-changing) #swup.transition-main {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.is-animating #swup.transition-main {
+  animation: swup-exit 0.2s ease-in both;
+}
+
+html.is-changing:not(.is-animating) #swup.transition-main {
+  animation: swup-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes swup-exit {
+  0% { opacity: 1; }
+  15% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes swup-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(9px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

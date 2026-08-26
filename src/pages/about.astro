@@ -1,0 +1,120 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const avatar = 'https://q.qlogo.cn/headimg_dl?dst_uin=179097240&spec=640&img_type=jpg';
+---
+
+<BaseLayout title="关于">
+  <div class="inner-page about-page">
+    <section class="about-hero">
+      <header class="page-heading">
+        <p class="eyebrow">ABOUT / 关于我</p>
+        <h1>还在学习，<br /><span>也在认真地做。</span></h1>
+        <p class="lead">我是一名高中生，喜欢把零散的灵感变成能被使用的东西。</p>
+      </header>
+
+      <aside class="identity glass" aria-label="个人信息">
+        <div class="avatar-wrap"><img src={avatar} alt="星辰的头像" /></div>
+        <div class="identity-copy">
+          <small>PERSONAL PROFILE</small>
+          <h2>星辰 <span>/ Razy</span></h2>
+          <p>高中生个人开发者</p>
+        </div>
+        <span class="status-dot" title="持续学习中"></span>
+      </aside>
+    </section>
+
+    <section class="about-content">
+      <article class="story glass">
+        <div class="section-label"><span>01</span><p>WHO I AM</p></div>
+        <div class="story-copy">
+          <h2>从喜欢开始，<br />把想法一点点做出来。</h2>
+          <p>平时学习、制作网页，也在探索 AI 对话和更舒服的交互体验。这里记录我正在尝试的方向，以及已经完成的作品。</p>
+          <blockquote>我喜欢把零散的灵感，做成真正能打开、能使用的页面。</blockquote>
+        </div>
+      </article>
+
+      <div class="focus-column">
+        <article class="focus-card glass">
+          <div class="focus-icon"><Icon name="fa6-solid:window-maximize" /></div>
+          <small>WEB / 页面</small>
+          <h3>从页面开始</h3>
+          <p>个人主页、展示页面和日常使用的小工具，是我持续练习的地方。</p>
+        </article>
+        <article class="focus-card glass accent-card">
+          <div class="focus-icon"><Icon name="fa6-solid:wand-magic-sparkles" /></div>
+          <small>DETAIL / 细节</small>
+          <h3>让体验更舒服</h3>
+          <p>我会关注颜色、层级、间距和移动端体验，也会尝试把 AI 能力接入真实场景。</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="about-footer-line">
+      <span>LEARNING IN PUBLIC</span>
+      <a href="/projects/">看看我做过的东西 <b aria-hidden="true">↗</b></a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .inner-page { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+  .about-page { padding-top: 10px; }
+  .about-hero { display: grid; grid-template-columns: 1.12fr .88fr; gap: 18px; align-items: end; }
+  .page-heading { padding: 18px 0 8px; animation: reveal-left .75s cubic-bezier(.2,.8,.2,1) both; }
+  .eyebrow, .section-label p, .identity small, .focus-card small { color: #b8c9eb; font-size: 10px; font-weight: 750; letter-spacing: .13em; }
+  .page-heading h1 { margin: 18px 0 17px; font-size: clamp(48px, 6.2vw, 82px); line-height: .99; letter-spacing: -.045em; }
+  .page-heading h1 span { color: #b9caf1; }
+  .lead { max-width: 470px; color: rgba(242,245,251,.64); font-size: 15px; line-height: 1.8; }
+  .identity { min-height: 156px; padding: 22px; display: grid; grid-template-columns: 90px 1fr auto; gap: 17px; align-items: center; border-radius: 18px; animation: reveal-right .75s .08s cubic-bezier(.2,.8,.2,1) both; }
+  .avatar-wrap { width: 90px; height: 90px; overflow: hidden; border: 1px solid rgba(224,235,255,.58); border-radius: 50%; box-shadow: 0 12px 28px rgba(0,0,0,.3); }
+  .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.16); }
+  .identity-copy h2 { margin: 7px 0 2px; font-size: 27px; line-height: 1.15; letter-spacing: -.035em; }
+  .identity-copy h2 span { color: #b9caf1; font-size: 18px; }
+  .identity-copy p { color: rgba(242,245,251,.54); font-size: 12px; }
+  .status-dot { align-self: start; width: 9px; height: 9px; border-radius: 50%; background: #8fe0d5; box-shadow: 0 0 0 5px rgba(143,224,213,.09), 0 0 18px rgba(143,224,213,.66); }
+  .about-content { display: grid; grid-template-columns: 1.35fr .65fr; gap: 18px; margin-top: 22px; }
+  .story { min-height: 390px; padding: 29px; display: grid; grid-template-columns: 90px 1fr; gap: 28px; border-radius: 18px; animation: rise .8s .14s cubic-bezier(.2,.8,.2,1) both; }
+  .section-label { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 3px; }
+  .section-label span { color: rgba(224,234,253,.42); font-size: 44px; font-weight: 300; line-height: 1; }
+  .section-label p { writing-mode: vertical-rl; transform: rotate(180deg); }
+  .story-copy { display: flex; flex-direction: column; justify-content: center; }
+  .story-copy h2 { margin: 0 0 24px; font-size: clamp(29px, 3.5vw, 45px); line-height: 1.12; letter-spacing: -.04em; }
+  .story-copy > p { max-width: 490px; color: rgba(242,245,251,.64); font-size: 14px; line-height: 1.85; }
+  blockquote { margin-top: 34px; padding: 13px 0 13px 19px; border-left: 1px solid rgba(185,202,241,.56); color: #d9e5fb; font-size: 14px; line-height: 1.7; }
+  .focus-column { display: grid; grid-template-rows: repeat(2, 1fr); gap: 18px; }
+  .focus-card { min-height: 186px; padding: 22px; border-radius: 18px; animation: reveal-right .8s .2s cubic-bezier(.2,.8,.2,1) both; transition: transform .25s ease, border-color .25s ease; }
+  .focus-card + .focus-card { animation-delay: .3s; }
+  .focus-card:hover { transform: translateY(-4px); }
+  .focus-icon { width: 36px; height: 36px; margin-bottom: 26px; display: grid; place-items: center; border: 1px solid rgba(207,224,255,.2); border-radius: 11px; background: rgba(255,255,255,.06); color: #c5d8fb; font-size: 14px; }
+  .focus-card h3 { margin: 7px 0 8px; font-size: 20px; letter-spacing: -.025em; }
+  .focus-card p { color: rgba(242,245,251,.57); font-size: 12px; line-height: 1.7; }
+  .accent-card { background: linear-gradient(145deg, rgba(49,64,92,.58), rgba(20,26,39,.34)); }
+  .about-footer-line { margin-top: 18px; padding: 17px 3px 0; display: flex; justify-content: space-between; border-top: 1px solid rgba(218,229,250,.13); color: rgba(215,226,247,.45); font-size: 10px; letter-spacing: .12em; }
+  .about-footer-line a { color: #dce8ff; font-weight: 700; letter-spacing: 0; }
+  .about-footer-line b { margin-left: 5px; color: #a9c8ff; font-size: 14px; }
+  @keyframes reveal-left { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes reveal-right { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 860px) {
+    .inner-page { width: min(100% - 28px, 640px); }
+    .about-hero, .about-content { grid-template-columns: 1fr; }
+    .identity { margin-top: 10px; }
+    .story { min-height: 340px; }
+    .focus-column { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+  }
+  @media (max-width: 560px) {
+    .page-heading h1 { font-size: 46px; }
+    .identity { grid-template-columns: 72px 1fr auto; padding: 18px; }
+    .avatar-wrap { width: 72px; height: 72px; }
+    .identity-copy h2 { font-size: 23px; }
+    .story { min-height: 0; padding: 23px 20px; grid-template-columns: 1fr; gap: 23px; }
+    .section-label { flex-direction: row; align-items: center; }
+    .section-label p { writing-mode: initial; transform: none; }
+    .section-label span { font-size: 32px; }
+    .focus-column { grid-template-columns: 1fr; }
+    .about-footer-line { gap: 18px; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>

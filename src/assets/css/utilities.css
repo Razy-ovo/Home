@@ -1,0 +1,52 @@
+/* ========================================
+ * utilities.css — 工具类样式
+ * ======================================== */
+
+/* ---- 头像 ---- */
+.avatar-ring {
+  --avatar-size: 100px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+/* ---- 玻璃卡片 ---- */
+.glass {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* 玻璃圆形按钮 */
+.glass-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  font: inherit;
+  text-decoration: none;
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  position: relative;
+  transition: filter var(--transition-base);
+}
+
+.glass-btn:hover {
+  filter: brightness(1.2);
+}
+
