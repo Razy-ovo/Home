@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import 'katex/dist/katex.min.css';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles', ({ data }) => !data.draft);
@@ -330,6 +331,27 @@ const readMinutes = Math.max(1, Math.ceil(wordCount / 450));
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.9em;
     line-height: 1.6;
+  }
+
+  .markdown :global(.katex-display) {
+    margin: 1.5rem 0;
+    padding: .85rem 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid rgba(200, 215, 240, .1);
+    border-radius: 10px;
+    background: rgba(7, 12, 23, .28);
+    color: #f3f6ff;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(169, 200, 255, .4) transparent;
+  }
+
+  .markdown :global(.katex-display > .katex) {
+    min-width: max-content;
+  }
+
+  .markdown :global(.katex) {
+    font-size: 1.06em;
   }
 
   /* 引用 */
