@@ -31,6 +31,7 @@ import { Icon } from 'astro-icon/components';
             </a>
           ))}
           <a href="/projects/" class="project-link">查看作品 <span aria-hidden="true">→</span></a>
+          <a href="/article/" class="article-link">阅读文章 <span aria-hidden="true">→</span></a>
         </div>
       </div>
       <div class="right-col" aria-label="当前方向">
@@ -69,7 +70,8 @@ import { Icon } from 'astro-icon/components';
   .glass-btn { display: grid; width: 41px; height: 41px; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: rgba(8,11,18,.25); color: #fff; font-size: 16px; transition: transform .25s ease, background .25s ease; }
   .glass-btn :global(svg) { width: 17px; height: 17px; }
   .glass-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,.15); }
-  .project-link { margin-left: 5px; color: #dbe8ff; font-size: 13px; font-weight: 650; }
+  .project-link, .article-link { margin-left: 5px; color: #dbe8ff; font-size: 13px; font-weight: 650; }
+  .article-link { color: rgba(214, 231, 255, .72); }
   .project-link span, .project-card b { margin-left: 5px; color: #a9c8ff; }
   .clock-card { min-height: 136px; padding: 14px 20px; border-radius: 16px; }
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }

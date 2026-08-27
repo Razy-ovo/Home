@@ -1,0 +1,635 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const filename = article.id.split('/').at(-1)?.replace(/[-_]/g, ' ') ?? '未命名文章';
+const title = article.data.title ?? filename;
+const articleText = article.body?.replace(/\s/g, '') ?? '';
+const wordCount = articleText.length;
+const readMinutes = Math.max(1, Math.ceil(wordCount / 450));
+---
+
+<BaseLayout title={title} description={article.data.description ?? title}>
+  <article class="article-detail">
+    <a href="/article/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      返回文章列表
+    </a>
+    
+    <header class="article-header">
+      {article.data.pubDate && (
+        <div class="article-meta">
+          <time datetime={article.data.pubDate.toISOString()}>{article.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+        </div>
+      )}
+      
+      <h1 class="article-title">{title}</h1>
+      
+      {article.data.description && <p class="article-description">{article.data.description}</p>}
+
+      <div class="article-properties" aria-label="文章信息">
+        <div class="article-property">
+          <Icon name="fa6-solid:font" aria-hidden="true" />
+          <span>字数</span>
+          <strong>{wordCount} 字</strong>
+        </div>
+        <div class="article-property">
+          <Icon name="fa6-solid:clock" aria-hidden="true" />
+          <span>阅读时间</span>
+          <strong>{readMinutes} 分钟</strong>
+        </div>
+      </div>
+      
+      {article.data.tags && article.data.tags.length > 0 && (
+        <div class="article-tags">
+          {article.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </header>
+
+    <div class="article-content">
+      <div class="markdown"><Content /></div>
+    </div>
+    
+    <footer class="article-footer">
+      <a href="/article/" class="footer-link">← 查看更多文章</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  /* 文章容器 */
+  .article-detail {
+    width: calc(100% - 160px);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 0 80px;
+  }
+  
+  /* 返回链接 */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 48px;
+    color: rgba(200, 215, 240, 0.6);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover {
+    color: #fff;
+  }
+  .back-link svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* 文章头部 */
+  .article-header {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(200, 215, 240, 0.1);
+  }
+  
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: rgba(200, 215, 240, 0.5);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .article-meta time {
+    color: rgba(200, 215, 240, 0.65);
+  }
+  
+  .separator {
+    color: rgba(200, 215, 240, 0.3);
+  }
+  
+  .article-title {
+    margin: 0 0 24px;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+  }
+  
+  .article-description {
+    margin: 0 0 24px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: rgba(200, 215, 240, 0.7);
+  }
+
+  .article-properties {
+    display: grid;
+    width: min(100%, 430px);
+    margin: 28px 0 24px;
+    border-top: 1px solid rgba(200, 215, 240, 0.1);
+    border-bottom: 1px solid rgba(200, 215, 240, 0.1);
+  }
+
+  .article-property {
+    display: grid;
+    grid-template-columns: 22px 140px 1fr;
+    align-items: center;
+    min-height: 38px;
+    color: rgba(200, 215, 240, 0.56);
+    font-size: 13px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .article-property + .article-property {
+    border-top: 1px solid rgba(200, 215, 240, 0.08);
+  }
+
+  .article-property :global(svg) {
+    width: 14px;
+    height: 14px;
+    color: rgba(169, 200, 255, 0.72);
+  }
+
+  .article-property strong {
+    color: rgba(228, 236, 252, 0.82);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .article-property:hover {
+    color: rgba(232, 240, 255, 0.82);
+  }
+  
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .tag {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: rgba(169, 200, 255, 0.08);
+    color: rgba(169, 200, 255, 0.8);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .tag:hover {
+    background: rgba(169, 200, 255, 0.15);
+    color: rgba(169, 200, 255, 1);
+  }
+  
+  /* 文章内容 */
+  .article-content {
+    margin-bottom: 80px;
+  }
+  
+  .markdown {
+    color: rgba(220, 230, 245, 0.85);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* Markdown 标题 */
+  .markdown :global(h1),
+  .markdown :global(h2),
+  .markdown :global(h3),
+  .markdown :global(h4),
+  .markdown :global(h5),
+  .markdown :global(h6) {
+    margin: 2.5em 0 0.8em;
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    position: relative;
+    scroll-margin-top: 100px;
+  }
+
+  .markdown :global(.header-anchor) {
+    position: absolute;
+    top: 0;
+    left: -0.9em;
+    padding: 0;
+    color: rgba(169, 200, 255, 0.9);
+    font-size: inherit;
+    font-weight: 500;
+    line-height: inherit;
+    text-decoration: none;
+    opacity: 0;
+    transition: color 0.25s ease, opacity 0.25s ease;
+  }
+
+  .markdown :global(h1:hover .header-anchor),
+  .markdown :global(h2:hover .header-anchor),
+  .markdown :global(h3:hover .header-anchor),
+  .markdown :global(h4:hover .header-anchor),
+  .markdown :global(h5:hover .header-anchor),
+  .markdown :global(h6:hover .header-anchor),
+  .markdown :global(.header-anchor:focus-visible) {
+    opacity: 1;
+  }
+
+  .markdown :global(.header-anchor:hover) {
+    color: #fff;
+  }
+  
+  .markdown :global(h1:first-child),
+  .markdown :global(h2:first-child),
+  .markdown :global(h3:first-child) {
+    margin-top: 0;
+  }
+  
+  .markdown :global(h1) {
+    font-size: 2.2em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid rgba(200, 215, 240, 0.15);
+  }
+  
+  .markdown :global(h2) {
+    font-size: 1.8em;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid rgba(200, 215, 240, 0.1);
+  }
+  
+  .markdown :global(h3) {
+    font-size: 1.5em;
+  }
+  
+  .markdown :global(h4) {
+    font-size: 1.25em;
+  }
+  
+  .markdown :global(h5),
+  .markdown :global(h6) {
+    font-size: 1.1em;
+  }
+
+  /* 段落 */
+  .markdown :global(p) {
+    margin: 1.5em 0;
+  }
+
+  /* 加粗、斜体、删除线 */
+  .markdown :global(strong) {
+    color: #fff;
+    font-weight: 700;
+  }
+  
+  .markdown :global(em) {
+    color: rgba(220, 230, 245, 0.9);
+    font-style: italic;
+  }
+  
+  .markdown :global(del) {
+    color: rgba(220, 230, 245, 0.4);
+    text-decoration: line-through;
+  }
+
+  /* 行内代码 */
+  .markdown :global(code:not(pre code)) {
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(169, 200, 255, 0.1);
+    color: rgba(169, 200, 255, 0.9);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  /* 代码块 */
+  .markdown :global(pre) {
+    margin: 2em 0;
+    padding: 24px;
+    border-radius: 8px;
+    background: rgba(15, 20, 30, 0.6);
+    border: 1px solid rgba(200, 215, 240, 0.1);
+    overflow-x: auto;
+  }
+  
+  .markdown :global(pre code) {
+    color: rgba(220, 230, 245, 0.9);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.6;
+  }
+
+  /* 引用 */
+  .markdown :global(blockquote) {
+    margin: 2em 0;
+    padding: 16px 24px;
+    border-left: 3px solid rgba(169, 200, 255, 0.5);
+    background: rgba(30, 40, 55, 0.3);
+    border-radius: 0 6px 6px 0;
+    color: rgba(220, 230, 245, 0.7);
+  }
+  
+  .markdown :global(blockquote p) {
+    margin: 0.5em 0;
+  }
+  
+  .markdown :global(blockquote p:first-child) {
+    margin-top: 0;
+  }
+  
+  .markdown :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+  
+  .markdown :global(blockquote blockquote) {
+    margin-top: 1em;
+    border-left-color: rgba(143, 224, 213, 0.5);
+    background: rgba(20, 30, 45, 0.4);
+  }
+
+  /* 列表 */
+  .markdown :global(ul),
+  .markdown :global(ol) {
+    margin: 1.5em 0;
+    padding-left: 2em;
+  }
+  
+  .markdown :global(li) {
+    margin: 0.5em 0;
+  }
+  
+  .markdown :global(ul) {
+    list-style: disc;
+  }
+  
+  .markdown :global(ol) {
+    list-style: decimal;
+  }
+  
+  .markdown :global(ul ul),
+  .markdown :global(ol ul) {
+    list-style: circle;
+  }
+  
+  .markdown :global(ul ul ul),
+  .markdown :global(ol ol ul) {
+    list-style: square;
+  }
+  
+  .markdown :global(li > ul),
+  .markdown :global(li > ol) {
+    margin: 0.5em 0;
+  }
+
+  /* 任务列表 */
+  .markdown :global(li:has(input[type="checkbox"])) {
+    list-style: none;
+    margin-left: -1.5em;
+  }
+  
+  .markdown :global(input[type="checkbox"]) {
+    margin-right: 0.5em;
+    accent-color: #8fe0d5;
+  }
+
+  /* 表格 */
+  .markdown :global(table) {
+    width: 100%;
+    margin: 2em 0;
+    border-collapse: collapse;
+    font-size: 0.95em;
+  }
+  
+  .markdown :global(thead) {
+    background: rgba(30, 40, 55, 0.5);
+  }
+  
+  .markdown :global(th) {
+    padding: 12px 16px;
+    text-align: left;
+    color: #ffffff;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(200, 215, 240, 0.2);
+  }
+  
+  .markdown :global(td) {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(200, 215, 240, 0.08);
+  }
+  
+  .markdown :global(tr:hover) {
+    background: rgba(30, 40, 55, 0.2);
+  }
+
+  /* 链接 */
+  .markdown :global(a) {
+    color: rgba(169, 200, 255, 0.9);
+    text-decoration: underline;
+    text-decoration-color: rgba(169, 200, 255, 0.3);
+    text-underline-offset: 3px;
+    transition: all 0.2s ease;
+  }
+  
+  .markdown :global(a:hover) {
+    color: rgba(169, 200, 255, 1);
+    text-decoration-color: rgba(169, 200, 255, 0.6);
+  }
+
+  /* 图片 */
+  .markdown :global(img) {
+    max-width: 100%;
+    height: auto;
+    margin: 2em auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid rgba(200, 215, 240, 0.1);
+  }
+
+  /* 分隔线 */
+  .markdown :global(hr) {
+    margin: 3em 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 215, 240, 0.2), transparent);
+  }
+
+  /* details/summary */
+  .markdown :global(details) {
+    margin: 2em 0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: rgba(30, 40, 55, 0.3);
+    border: 1px solid rgba(200, 215, 240, 0.1);
+  }
+  
+  .markdown :global(summary) {
+    cursor: pointer;
+    color: rgba(169, 200, 255, 0.9);
+    font-weight: 600;
+    user-select: none;
+  }
+  
+  .markdown :global(summary:hover) {
+    color: rgba(169, 200, 255, 1);
+  }
+  
+  .markdown :global(details[open] > summary) {
+    margin-bottom: 1em;
+    padding-bottom: 0.8em;
+    border-bottom: 1px solid rgba(200, 215, 240, 0.1);
+  }
+
+  /* 脚注 */
+  .markdown :global(.footnotes) {
+    margin-top: 3em;
+    padding-top: 2em;
+    border-top: 1px solid rgba(200, 215, 240, 0.1);
+    font-size: 0.9em;
+    color: rgba(220, 230, 245, 0.6);
+  }
+  
+  .markdown :global(.footnotes ol) {
+    padding-left: 1.5em;
+  }
+
+  /* 高亮标记 */
+  .markdown :global(mark) {
+    background: rgba(255, 235, 59, 0.2);
+    color: #fffacd;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+
+  /* 文章尾部 */
+  .article-footer {
+    padding-top: 48px;
+    border-top: 1px solid rgba(200, 215, 240, 0.1);
+    text-align: center;
+  }
+  
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(200, 215, 240, 0.6);
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .footer-link:hover {
+    color: rgba(169, 200, 255, 1);
+  }
+
+  /* 响应式 */
+  @media (max-width: 1024px) {
+    .article-detail {
+      width: calc(100% - 100px);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .article-detail {
+      width: calc(100% - 60px);
+      padding: 40px 0 60px;
+    }
+    
+    .back-link {
+      margin-bottom: 32px;
+    }
+    
+    .article-header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+    }
+    
+    .article-title {
+      font-size: clamp(28px, 7vw, 42px);
+      margin-bottom: 16px;
+    }
+    
+    .article-description {
+      font-size: 16px;
+    }
+
+    .article-property {
+      grid-template-columns: 22px 112px 1fr;
+    }
+    
+    .markdown {
+      font-size: 16px;
+    }
+    
+    .markdown :global(h1) {
+      font-size: 1.8em;
+    }
+    
+    .markdown :global(h2) {
+      font-size: 1.5em;
+    }
+    
+    .markdown :global(h3) {
+      font-size: 1.3em;
+    }
+    
+    .markdown :global(pre) {
+      padding: 16px;
+    }
+    
+    .markdown :global(table) {
+      font-size: 0.85em;
+    }
+    
+    .markdown :global(th),
+    .markdown :global(td) {
+      padding: 8px 10px;
+    }
+
+  }
+  
+  @media (max-width: 480px) {
+    .article-detail {
+      width: calc(100% - 32px);
+    }
+    
+    .article-title {
+      font-size: 28px;
+    }
+    
+    .article-description {
+      font-size: 15px;
+    }
+    
+    .markdown {
+      font-size: 15px;
+    }
+  }
+</style>
+
+<script>
+  const headingSelector = '.markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6';
+
+  document.querySelectorAll<HTMLElement>(headingSelector).forEach((heading) => {
+    if (!heading.id || heading.querySelector('.header-anchor')) return;
+
+    const anchor = document.createElement('a');
+    anchor.className = 'header-anchor';
+    anchor.href = `#${heading.id}`;
+    anchor.ariaLabel = `跳转到 ${heading.textContent?.trim() ?? '该标题'}`;
+    anchor.textContent = '#';
+    heading.append(anchor);
+  });
+</script>
