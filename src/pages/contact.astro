@@ -136,20 +136,20 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
         '',
         content,
       ].join('\n');
-      const beacon = new Image();
-      beacon.onload = () => {
+      const requestUrl = `${PUSH_API}?title=${encodeURIComponent(title)}&content=${encodeURIComponent(message)}&_t=${Date.now()}`;
+      fetch(requestUrl, { method: 'GET', mode: 'no-cors', keepalive: true })
+        .then(() => {
         status.textContent = '信号已送达，谢谢你的留言。';
         status.className = 'form-status success';
         form.reset();
         charHint.textContent = '0 / 1000';
         button.disabled = false;
-      };
-      beacon.onerror = () => {
+        })
+        .catch(() => {
         status.textContent = '发送失败，请直接通过邮箱联系我。';
         status.className = 'form-status error';
         button.disabled = false;
-      };
-      beacon.src = `${PUSH_API}?title=${encodeURIComponent(title)}&content=${encodeURIComponent(message)}&_t=${Date.now()}`;
+        });
     });
   }
 </script>
