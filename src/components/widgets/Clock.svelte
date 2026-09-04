@@ -6,66 +6,49 @@
   let now = $state(new Date());
   let time = $state('');
   let date = $state('');
-  let timer;
   let raf;
+  let lastDisplayedSecond = -1;
 
   let hDeg = $state(0);
   let mDeg = $state(0);
   let sDeg = $state(0);
 
-  let hBase = 0;
-  let mBase = 0;
-  let sBase = 0;
-
-  let prevH = 0;
-  let prevM = 0;
-  let prevS = 0;
-
   function hAngle(d) {
     const h = d.getHours() % 12;
     const m = d.getMinutes();
     const s = d.getSeconds();
-    return h * 30 + m * 0.5 + s / 120;
+    return h * 30 + m * 0.5 + s / 120 + d.getMilliseconds() / 120000;
   }
 
   function mAngle(d) {
-    return d.getMinutes() * 6 + d.getSeconds() * 0.1;
+    return d.getMinutes() * 6 + d.getSeconds() * 0.1 + d.getMilliseconds() / 60000;
   }
 
   function sAngle(d) {
-    return d.getSeconds() * 6;
-  }
-
-  const EASE_DURATION = 4000;
-  let easeStart = 0;
-  let easeFromH = 0, easeFromM = 0, easeFromS = 0;
-  let easeToH = 0, easeToM = 0, easeToS = 0;
-  let easing = false;
-
-  function easeOut(t) {
-    return 1 - Math.pow(1 - t, 5);
+    return d.getSeconds() * 6 + d.getMilliseconds() * 0.006;
   }
 
   function loop(ts) {
-    if (easing) {
-      const elapsed = ts - easeStart;
-      const t = Math.min(elapsed / EASE_DURATION, 1);
-      const e = easeOut(t);
-      hDeg = easeFromH + (easeToH - easeFromH) * e;
-      mDeg = easeFromM + (easeToM - easeFromM) * e;
-      sDeg = easeFromS + (easeToS - easeFromS) * e;
-      if (t < 1) {
-        raf = requestAnimationFrame(loop);
-      } else {
-        easing = false;
-        hBase = easeToH;
-        mBase = easeToM;
-        sBase = easeToS;
-        prevH = hAngle(now);
-        prevM = mAngle(now);
-        prevS = sAngle(now);
-      }
+    const current = new Date();
+    now = current;
+    hDeg = hAngle(current);
+    mDeg = mAngle(current);
+    sDeg = sAngle(current);
+
+    if (current.getSeconds() !== lastDisplayedSecond) {
+      lastDisplayedSecond = current.getSeconds();
+      const h = String(current.getHours()).padStart(2, "0");
+      const m = String(current.getMinutes()).padStart(2, "0");
+      const s = String(current.getSeconds()).padStart(2, "0");
+      time = `${h}:${m}:${s}`;
+
+      const y = current.getFullYear();
+      const mo = String(current.getMonth() + 1).padStart(2, "0");
+      const d = String(current.getDate()).padStart(2, "0");
+      date = `${y}/${mo}/${d}`;
     }
+
+    raf = requestAnimationFrame(loop);
   }
 
   function tick() {
@@ -74,63 +57,24 @@
     const m = String(now.getMinutes()).padStart(2, "0");
     const s = String(now.getSeconds()).padStart(2, "0");
     time = `${h}:${m}:${s}`;
+    lastDisplayedSecond = now.getSeconds();
 
     const y = now.getFullYear();
     const mo = String(now.getMonth() + 1).padStart(2, "0");
     const d = String(now.getDate()).padStart(2, "0");
     date = `${y}/${mo}/${d}`;
 
-    if (ready && !easing) {
-      const curH = hAngle(now);
-      const curM = mAngle(now);
-      const curS = sAngle(now);
-      let dh = curH - prevH;
-      let dm = curM - prevM;
-      let ds = curS - prevS;
-      if (dh < -180) dh += 360;
-      if (dm < -180) dm += 360;
-      if (ds < -180) ds += 360;
-      hBase += dh;
-      mBase += dm;
-      sBase += ds;
-      prevH = curH;
-      prevM = curM;
-      prevS = curS;
-      hDeg = hBase;
-      mDeg = mBase;
-      sDeg = sBase;
-    }
+    hDeg = hAngle(now);
+    mDeg = mAngle(now);
+    sDeg = sAngle(now);
   }
 
   onMount(() => {
     tick();
-    prevH = hAngle(now);
-    prevM = mAngle(now);
-    prevS = sAngle(now);
-
-    const targetH = prevH + 360;
-    const targetM = prevM + 540;
-    const targetS = prevS + 720;
-
-    easeFromH = hDeg;
-    easeFromM = mDeg;
-    easeFromS = sDeg;
-    easeToH = targetH;
-    easeToM = targetM;
-    easeToS = targetS;
-    easeStart = performance.now();
-    easing = true;
-
-    hBase = targetH;
-    mBase = targetM;
-    sBase = targetS;
-
     ready = true;
     raf = requestAnimationFrame(loop);
-    timer = setInterval(tick, 1000);
 
     return () => {
-      clearInterval(timer);
       cancelAnimationFrame(raf);
     };
   });
