@@ -19,7 +19,7 @@ export const friends: Friend[] = [
     name: '羽毛的小屋',
     description: '阅己 越己 悦己',
     url: 'https://ym.2v.nz/',
-    avatar: 'https://ym.2v.nz/_astro/avatar.CvlqatIg_1DWLHP.webp',
+    avatar: 'https://ym.2v.nz/images/favicon.png',
   },
   {
     name: '示例站点',
