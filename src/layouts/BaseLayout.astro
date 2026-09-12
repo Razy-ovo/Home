@@ -28,6 +28,7 @@ const pageTitle = title ? `${title} - ${site.name}` : site.name;
     <meta name="description" content={description} />
     <meta name="color-scheme" content={site.colorScheme} />
     <title>{pageTitle}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" />
     <slot name="head" />
   </head>
   <body>
