@@ -62,46 +62,46 @@ import { friends } from '../data/friends';
 </BaseLayout>
 
 <script>
-  const dialog = document.getElementById('risk-dialog') as HTMLDialogElement;
-  const targetSite = document.getElementById('target-site');
-  const siteUrl = document.getElementById('site-url');
-  const cancelBtn = document.getElementById('cancel-btn');
-  const confirmBtn = document.getElementById('confirm-btn');
+  // 事件委托，兼容 Swup 页面切换
   let pendingUrl = '';
 
-  // 为所有访问按钮添加事件监听
-  document.querySelectorAll('.visit-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      const url = target.dataset.url;
-      const name = target.dataset.name;
-      
-      if (url && name && targetSite && siteUrl) {
+  document.addEventListener('click', (e) => {
+    const dialog = document.getElementById('risk-dialog') as HTMLDialogElement | null;
+
+    // 点击访问按钮 → 打开风险提示
+    const visitBtn = (e.target as HTMLElement).closest('.visit-btn') as HTMLButtonElement | null;
+    if (visitBtn) {
+      const url = visitBtn.dataset.url;
+      const name = visitBtn.dataset.name;
+      if (url && name && dialog) {
         pendingUrl = url;
-        targetSite.textContent = name;
-        siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        const targetSite = document.getElementById('target-site');
+        const siteUrl = document.getElementById('site-url');
+        if (targetSite) targetSite.textContent = name;
+        if (siteUrl) siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
         dialog.showModal();
       }
-    });
-  });
-
-  // 取消按钮
-  cancelBtn?.addEventListener('click', () => {
-    dialog.close();
-    pendingUrl = '';
-  });
-
-  // 确认按钮
-  confirmBtn?.addEventListener('click', () => {
-    if (pendingUrl) {
-      window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+      return;
     }
-    dialog.close();
-    pendingUrl = '';
-  });
 
-  // 点击背景关闭对话框
-  dialog?.addEventListener('click', (e) => {
+    // 点击取消
+    if ((e.target as HTMLElement).closest('#cancel-btn')) {
+      dialog?.close();
+      pendingUrl = '';
+      return;
+    }
+
+    // 点击确认
+    if ((e.target as HTMLElement).closest('#confirm-btn')) {
+      if (pendingUrl) {
+        window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+      }
+      dialog?.close();
+      pendingUrl = '';
+      return;
+    }
+
+    // 点击遮罩 → 关闭
     if (e.target === dialog) {
       dialog.close();
       pendingUrl = '';
