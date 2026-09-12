@@ -13,16 +13,18 @@ import { friends } from '../data/friends';
     <section class="friends-grid" aria-label="友情链接列表">
       {friends.map((friend) => (
         <article class="friend-card glass">
-          <div class="friend-avatar">
-            {friend.avatar.startsWith('fas-') ? (
-              <i class={`fa-solid ${friend.avatar.replace('fas-', 'fa-')}`}></i>
-            ) : (
-              <img src={friend.avatar} alt={`${friend.name}的头像`} />
-            )}
-          </div>
-          <div class="friend-info">
-            <h2 class="friend-name">{friend.name}</h2>
-            <p class="friend-desc">{friend.description}</p>
+          <div class="friend-header">
+            <div class="friend-avatar">
+              {friend.avatar.startsWith('fas-') ? (
+                <i class={`fa-solid ${friend.avatar.replace('fas-', 'fa-')}`}></i>
+              ) : (
+                <img src={friend.avatar} alt={`${friend.name}的头像`} />
+              )}
+            </div>
+            <div class="friend-info">
+              <h2 class="friend-name">{friend.name}</h2>
+              <p class="friend-desc">{friend.description}</p>
+            </div>
           </div>
           <button 
             class="visit-btn" 
@@ -133,8 +135,21 @@ import { friends } from '../data/friends';
 
   .friends-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  @media (min-width: 768px) {
+    .friends-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .friends-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .friend-card {
@@ -145,6 +160,12 @@ import { friends } from '../data/friends';
     gap: 16px;
     transition: transform .3s ease, box-shadow .3s ease;
     animation: card-in .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .friend-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
   }
 
   .friend-card:hover {
@@ -171,6 +192,7 @@ import { friends } from '../data/friends';
     align-items: center;
     justify-content: center;
     background: rgba(169,200,255,.08);
+    flex-shrink: 0;
   }
 
   .friend-avatar img {
