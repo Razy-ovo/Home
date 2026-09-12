@@ -1,0 +1,357 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { friends } from '../data/friends';
+---
+
+<BaseLayout title="友情链接">
+  <div class="friends-page">
+    <header class="page-header">
+      <h1>友情链接</h1>
+      <p class="subtitle">与志同道合的朋友们一起前行</p>
+    </header>
+
+    <section class="friends-grid" aria-label="友情链接列表">
+      {friends.map((friend) => (
+        <article class="friend-card glass">
+          <div class="friend-avatar">
+            <img src={friend.avatar} alt={`${friend.name}的头像`} />
+          </div>
+          <div class="friend-info">
+            <h2 class="friend-name">{friend.name}</h2>
+            <p class="friend-desc">{friend.description}</p>
+          </div>
+          <button 
+            class="visit-btn" 
+            data-url={friend.url}
+            data-name={friend.name}
+            aria-label={`访问${friend.name}`}
+          >
+            访问站点 <span aria-hidden="true">→</span>
+          </button>
+        </article>
+      ))}
+    </section>
+  </div>
+
+  <!-- 风险提示对话框 -->
+  <dialog id="risk-dialog" class="risk-dialog">
+    <div class="dialog-content glass">
+      <div class="dialog-header">
+        <svg class="warning-icon" width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>即将离开本站</h3>
+      </div>
+      <div class="dialog-body">
+        <p>您即将访问外部站点：<strong id="target-site"></strong></p>
+        <p class="warning-text">请注意网络安全，谨慎访问不熟悉的网站</p>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn-cancel" id="cancel-btn">取消</button>
+        <button class="btn-confirm" id="confirm-btn">继续访问</button>
+      </div>
+    </div>
+  </dialog>
+</BaseLayout>
+
+<script>
+  const dialog = document.getElementById('risk-dialog') as HTMLDialogElement;
+  const targetSite = document.getElementById('target-site');
+  const cancelBtn = document.getElementById('cancel-btn');
+  const confirmBtn = document.getElementById('confirm-btn');
+  let pendingUrl = '';
+
+  // 为所有访问按钮添加事件监听
+  document.querySelectorAll('.visit-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const url = target.dataset.url;
+      const name = target.dataset.name;
+      
+      if (url && name && targetSite) {
+        pendingUrl = url;
+        targetSite.textContent = name;
+        dialog.showModal();
+      }
+    });
+  });
+
+  // 取消按钮
+  cancelBtn?.addEventListener('click', () => {
+    dialog.close();
+    pendingUrl = '';
+  });
+
+  // 确认按钮
+  confirmBtn?.addEventListener('click', () => {
+    if (pendingUrl) {
+      window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+    }
+    dialog.close();
+    pendingUrl = '';
+  });
+
+  // 点击背景关闭对话框
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) {
+      dialog.close();
+      pendingUrl = '';
+    }
+  });
+</script>
+
+<style>
+  .friends-page {
+    width: min(940px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 20px 0 60px;
+  }
+
+  .page-header {
+    margin-bottom: 42px;
+    text-align: center;
+    animation: header-in .8s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .page-header h1 {
+    margin: 0 0 12px;
+    font-size: clamp(38px, 5vw, 52px);
+    font-weight: 750;
+    letter-spacing: -.03em;
+    color: #fff;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: rgba(233,238,248,.62);
+    font-size: 15px;
+  }
+
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .friend-card {
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform .3s ease, box-shadow .3s ease;
+    animation: card-in .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .friend-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 64px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12);
+  }
+
+  .glass {
+    border: 1px solid rgba(255,255,255,.17);
+    background: linear-gradient(140deg, rgba(32,37,48,.65), rgba(16,20,29,.43));
+    box-shadow: 0 20px 54px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+  }
+
+  .friend-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  }
+
+  .friend-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .friend-info {
+    flex: 1;
+  }
+
+  .friend-name {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -.01em;
+  }
+
+  .friend-desc {
+    margin: 0;
+    color: rgba(242,245,251,.68);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .visit-btn {
+    width: 100%;
+    padding: 10px 18px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 10px;
+    background: rgba(169,200,255,.12);
+    color: #dbe8ff;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: all .25s ease;
+  }
+
+  .visit-btn span {
+    margin-left: 6px;
+    color: #a9c8ff;
+  }
+
+  .visit-btn:hover {
+    background: rgba(169,200,255,.22);
+    border-color: rgba(255,255,255,.35);
+    transform: translateY(-2px);
+  }
+
+  /* 风险提示对话框 */
+  .risk-dialog {
+    border: none;
+    background: transparent;
+    padding: 0;
+    max-width: 440px;
+    width: calc(100% - 40px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+
+  .risk-dialog::backdrop {
+    background: rgba(3,5,10,.75);
+    backdrop-filter: blur(8px);
+  }
+
+  .dialog-content {
+    padding: 32px 28px;
+    border-radius: 18px;
+    animation: dialog-in .35s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .dialog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .warning-icon {
+    color: #F59E0B;
+  }
+
+  .dialog-header h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .dialog-body p {
+    margin: 0 0 12px;
+    color: rgba(242,245,251,.78);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .dialog-body strong {
+    color: #a9c8ff;
+    font-weight: 650;
+  }
+
+  .warning-text {
+    color: rgba(245,158,11,.85) !important;
+    font-size: 13px !important;
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .dialog-actions button {
+    flex: 1;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: all .25s ease;
+  }
+
+  .btn-cancel {
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.08);
+    color: rgba(242,245,251,.85);
+  }
+
+  .btn-cancel:hover {
+    background: rgba(255,255,255,.15);
+  }
+
+  .btn-confirm {
+    border: 1px solid rgba(169,200,255,.35);
+    background: rgba(169,200,255,.18);
+    color: #dbe8ff;
+  }
+
+  .btn-confirm:hover {
+    background: rgba(169,200,255,.28);
+    border-color: rgba(169,200,255,.5);
+  }
+
+  @keyframes header-in {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes dialog-in {
+    from { opacity: 0; transform: scale(.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    .friends-page {
+      width: calc(100% - 28px);
+      padding: 10px 0 50px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .friends-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .friend-card {
+      padding: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
