@@ -134,7 +134,6 @@ import { site } from "../../data/site";
     .nav-logo span { display: none; }
     .hamburger { display: flex; flex-shrink: 0; }
     .nav-links {
-      display: none;
       position: absolute;
       top: calc(100% + 8px);
       left: 0;
@@ -144,18 +143,25 @@ import { site } from "../../data/site";
       background: rgba(6, 9, 18, .95);
       backdrop-filter: blur(10px);
       border-radius: 18px;
-      padding: 8px 0;
-      border: 1px solid rgba(255,255,255,.1);
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .3s cubic-bezier(.2,.8,.2,1);
     }
     .nav-links.active {
-      display: flex;
+      max-height: 360px;
     }
     .nav-links a {
-      padding: 12px 20px;
+      padding: 13px 20px;
       font-size: .9rem;
       border-radius: 0;
       display: block;
       white-space: nowrap;
+    }
+    .nav-links a:first-child {
+      padding-top: 21px;
+    }
+    .nav-links a:last-child {
+      padding-bottom: 21px;
     }
     .nav-links a:hover {
       background: rgba(255,255,255,.08);
