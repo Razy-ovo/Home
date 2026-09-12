@@ -62,51 +62,54 @@ import { friends } from '../data/friends';
 </BaseLayout>
 
 <script>
-  // 事件委托，兼容 Swup 页面切换
-  let pendingUrl = '';
+  // 防止 Swup 导航时脚本重复执行
+  if (!window.__friendsDialogReady) {
+    window.__friendsDialogReady = true;
+    let pendingUrl = '';
 
-  document.addEventListener('click', (e) => {
-    const dialog = document.getElementById('risk-dialog') as HTMLDialogElement | null;
+    document.addEventListener('click', (e) => {
+      const dialog = document.getElementById('risk-dialog') as HTMLDialogElement | null;
 
-    // 点击访问按钮 → 打开风险提示
-    const visitBtn = (e.target as HTMLElement).closest('.visit-btn') as HTMLButtonElement | null;
-    if (visitBtn) {
-      const url = visitBtn.dataset.url;
-      const name = visitBtn.dataset.name;
-      if (url && name && dialog) {
-        pendingUrl = url;
-        const targetSite = document.getElementById('target-site');
-        const siteUrl = document.getElementById('site-url');
-        if (targetSite) targetSite.textContent = name;
-        if (siteUrl) siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-        dialog.showModal();
+      // 点击访问按钮 → 打开风险提示
+      const visitBtn = (e.target as HTMLElement).closest('.visit-btn') as HTMLButtonElement | null;
+      if (visitBtn) {
+        const url = visitBtn.dataset.url;
+        const name = visitBtn.dataset.name;
+        if (url && name && dialog) {
+          pendingUrl = url;
+          const targetSite = document.getElementById('target-site');
+          const siteUrl = document.getElementById('site-url');
+          if (targetSite) targetSite.textContent = name;
+          if (siteUrl) siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+          dialog.showModal();
+        }
+        return;
       }
-      return;
-    }
 
-    // 点击取消
-    if ((e.target as HTMLElement).closest('#cancel-btn')) {
-      dialog?.close();
-      pendingUrl = '';
-      return;
-    }
-
-    // 点击确认
-    if ((e.target as HTMLElement).closest('#confirm-btn')) {
-      if (pendingUrl) {
-        window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+      // 点击取消
+      if ((e.target as HTMLElement).closest('#cancel-btn')) {
+        dialog?.close();
+        pendingUrl = '';
+        return;
       }
-      dialog?.close();
-      pendingUrl = '';
-      return;
-    }
 
-    // 点击遮罩 → 关闭
-    if (e.target === dialog) {
-      dialog.close();
-      pendingUrl = '';
-    }
-  });
+      // 点击确认
+      if ((e.target as HTMLElement).closest('#confirm-btn')) {
+        if (pendingUrl) {
+          window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+        }
+        dialog?.close();
+        pendingUrl = '';
+        return;
+      }
+
+      // 点击遮罩 → 关闭
+      if (e.target === dialog) {
+        dialog.close();
+        pendingUrl = '';
+      }
+    });
+  }
 </script>
 
 <style>
