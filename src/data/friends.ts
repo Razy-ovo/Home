@@ -25,6 +25,6 @@ export const friends: Friend[] = [
     name: '示例站点',
     description: '这是一个示例友情链接站点',
     url: 'https://example.com',
-    avatar: 'https://via.placeholder.com/120/4A90E2/FFFFFF?text=Demo',
+    avatar: 'https://images.unsplash.com/photo-1511379938547-c1f69b13d835?auto=format&fit=crop&w=200&q=80',
   },
 ];
