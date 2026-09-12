@@ -24,41 +24,45 @@ import { site } from "../../data/site";
 </div>
 
 <script>
-  // 汉堡菜单交互（事件委托，兼容 Swup 页面切换）
-  function closeMenu(h, n) {
-    if (h) { h.classList.remove('active'); h.setAttribute('aria-expanded', 'false'); }
-    if (n) n.classList.remove('active');
-  }
+  // 防止 Swup 导航时脚本重复执行导致 2N 个监听器相互抵消
+  if (!window.__navMenuReady) {
+    window.__navMenuReady = true;
 
-  document.addEventListener('click', (e) => {
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-
-    // 点击菜单中的链接 → 先关闭菜单，再让 Swup 导航
-    if (e.target.closest('.nav-links a[href]')) {
-      closeMenu(hamburger, navLinks);
-      return; // 不拦截，Swup 会在捕获阶段处理导航
+    function closeMenu(h, n) {
+      if (h) { h.classList.remove('active'); h.setAttribute('aria-expanded', 'false'); }
+      if (n) n.classList.remove('active');
     }
 
-    // 点击汉堡按钮 → 开关菜单
-    if (e.target.closest('.hamburger')) {
-      if (!hamburger || !navLinks) return;
-      const open = hamburger.getAttribute('aria-expanded') === 'true';
-      if (open) {
+    document.addEventListener('click', (e) => {
+      const hamburger = document.querySelector('.hamburger');
+      const navLinks = document.querySelector('.nav-links');
+
+      // 点击菜单中的链接 → 先关闭菜单，再让 Swup 导航
+      if (e.target.closest('.nav-links a[href]')) {
         closeMenu(hamburger, navLinks);
-      } else {
-        hamburger.setAttribute('aria-expanded', 'true');
-        hamburger.classList.add('active');
-        navLinks.classList.add('active');
+        return;
       }
-      return;
-    }
 
-    // 点击导航栏外部 → 关闭菜单
-    if (!e.target.closest('.navbar')) {
-      closeMenu(hamburger, navLinks);
-    }
-  });
+      // 点击汉堡按钮 → 开关菜单
+      if (e.target.closest('.hamburger')) {
+        if (!hamburger || !navLinks) return;
+        const open = hamburger.getAttribute('aria-expanded') === 'true';
+        if (open) {
+          closeMenu(hamburger, navLinks);
+        } else {
+          hamburger.setAttribute('aria-expanded', 'true');
+          hamburger.classList.add('active');
+          navLinks.classList.add('active');
+        }
+        return;
+      }
+
+      // 点击导航栏外部 → 关闭菜单
+      if (!e.target.closest('.navbar')) {
+        closeMenu(hamburger, navLinks);
+      }
+    });
+  }
 </script>
 
 <style>
