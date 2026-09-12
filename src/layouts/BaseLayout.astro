@@ -44,6 +44,53 @@ const pageTitle = title ? `${title} - ${site.name}` : site.name;
   </body>
 </html>
 
+<script>
+  // 友链弹窗交互（在 #swup 外，初次加载即注册，不受 Swup 导航影响）
+  if (!window.__friendsDialogReady) {
+    window.__friendsDialogReady = true;
+    let pendingUrl = '';
+
+    document.addEventListener('click', (e) => {
+      const dialog = document.getElementById('risk-dialog') as HTMLDialogElement | null;
+
+      const visitBtn = (e.target as HTMLElement).closest('.visit-btn') as HTMLButtonElement | null;
+      if (visitBtn) {
+        const url = visitBtn.dataset.url;
+        const name = visitBtn.dataset.name;
+        if (url && name && dialog) {
+          pendingUrl = url;
+          const targetSite = document.getElementById('target-site');
+          const siteUrl = document.getElementById('site-url');
+          if (targetSite) targetSite.textContent = name;
+          if (siteUrl) siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+          dialog.showModal();
+        }
+        return;
+      }
+
+      if ((e.target as HTMLElement).closest('#cancel-btn')) {
+        dialog?.close();
+        pendingUrl = '';
+        return;
+      }
+
+      if ((e.target as HTMLElement).closest('#confirm-btn')) {
+        if (pendingUrl) {
+          window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+        }
+        dialog?.close();
+        pendingUrl = '';
+        return;
+      }
+
+      if (e.target === dialog) {
+        dialog.close();
+        pendingUrl = '';
+      }
+    });
+  }
+</script>
+
 <style is:global>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: #060912; }
   .page { min-height: 100svh; height: auto; }
