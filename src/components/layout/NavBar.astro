@@ -61,6 +61,7 @@ import { site } from "../../data/site";
     justify-content: space-between;
     border-radius: 21px;
     animation: nav-in .7s cubic-bezier(.2,.8,.2,1) both;
+    position: relative;
   }
   .nav-logo {
     display: flex;
@@ -113,51 +114,48 @@ import { site } from "../../data/site";
     transition: all .3s ease;
   }
   .hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
+    transform: translateY(7px) rotate(45deg);
   }
   .hamburger.active span:nth-child(2) {
     opacity: 0;
   }
   .hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: translateY(-7px) rotate(-45deg);
   }
   @keyframes nav-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 768px) {
     .nav-wrap { top: 10px; width: calc(100% - 28px); }
     .navbar { 
       min-height: 54px; 
-      padding: 8px 10px 8px 14px; 
+      padding: 8px 14px; 
       border-radius: 18px;
-      flex-wrap: wrap;
     }
-    .nav-logo { font-size: .9rem; }
+    .nav-logo { font-size: .9rem; flex-shrink: 0; }
     .nav-logo span { display: none; }
-    .hamburger { display: flex; }
+    .hamburger { display: flex; flex-shrink: 0; }
     .nav-links {
+      display: none;
       position: absolute;
-      top: 100%;
+      top: calc(100% + 8px);
       left: 0;
       right: 0;
       gap: 0;
-      width: 100%;
       flex-direction: column;
       background: rgba(6, 9, 18, .95);
       backdrop-filter: blur(10px);
-      border-radius: 0 0 18px 18px;
-      padding: 10px 0;
-      margin-top: 8px;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .3s ease;
+      border-radius: 18px;
+      padding: 8px 0;
+      border: 1px solid rgba(255,255,255,.1);
     }
     .nav-links.active {
-      max-height: 300px;
+      display: flex;
     }
     .nav-links a {
       padding: 12px 20px;
       font-size: .9rem;
       border-radius: 0;
       display: block;
+      white-space: nowrap;
     }
     .nav-links a:hover {
       background: rgba(255,255,255,.08);
