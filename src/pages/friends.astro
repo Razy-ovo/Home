@@ -262,53 +262,44 @@ import { friends } from '../data/friends';
     font-weight: 650;
   }
 
-  .warning-text {
-    color: rgba(245,158,11,.85) !important;
-    font-size: 13px !important;
+  /* 更具体的选择器覆盖 .dialog-body p 的通用样式，无需 !important */
+  .dialog-body .warning-text {
+    color: rgba(245,158,11,.85);
+    font-size: 13px;
   }
 
-  .site-url {
-    margin: 8px 0 !important;
+  .dialog-body .site-url {
+    margin: 8px 0;
     padding: 8px 12px;
     background: rgba(169,200,255,.08);
     border-radius: 8px;
-    font-size: 13px !important;
+    font-size: 13px;
     word-break: break-all;
     text-align: center;
   }
 
-  .copy-url-btn {
-    background: none;
+  /* 该按钮由 risk-dialog.ts 动态创建，必须用 :global 才能命中 */
+  :global(.copy-url-btn) {
+    width: 100%;
+    padding: 4px 8px;
     border: none;
+    border-radius: 6px;
+    background: none;
     color: #a9c8ff;
     font-size: 13px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: all .2s ease;
-    word-break: break-all;
-    width: 100%;
     text-align: center;
+    word-break: break-all;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
   }
 
-  .copy-url-btn:hover {
+  :global(.copy-url-btn:hover) {
     background: rgba(169,200,255,.15);
     color: #bfd9ff;
   }
 
-  .copy-url-btn:active {
-    transform: scale(0.98);
-  }
-
-  .site-url a {
-    color: #a9c8ff;
-    text-decoration: none;
-    transition: color .2s ease;
-  }
-
-  .site-url a:hover {
-    color: #bfd9ff;
-    text-decoration: underline;
+  :global(.copy-url-btn:active) {
+    transform: scale(.98);
   }
 
   .dialog-actions {
