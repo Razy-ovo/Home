@@ -21,7 +21,7 @@
     "katex": "^0.18.5",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "svelte": "^5.56.10"
+    "svelte": "^4.2.19"
   },
   "devDependencies": {
     "typescript": "^5.3.3"

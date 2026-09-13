@@ -1,17 +1,17 @@
 <!-- Clock.svelte — 实时时钟 -->
 <script>
-  import { onMount, onDestroy } from 'svelte';
-
-  let ready = $state(false);
-  let now = $state(new Date());
-  let time = $state('');
-  let date = $state('');
+  import { onMount } from 'svelte';
+  
+  let ready = false;
+  let now = new Date();
+  let time = '';
+  let date = '';
   let raf;
   let lastDisplayedSecond = -1;
 
-  let hDeg = $state(0);
-  let mDeg = $state(0);
-  let sDeg = $state(0);
+  let hDeg = 0;
+  let mDeg = 0;
+  let sDeg = 0;
 
   function hAngle(d) {
     const h = d.getHours() % 12;
@@ -75,7 +75,9 @@
     raf = requestAnimationFrame(loop);
 
     return () => {
-      cancelAnimationFrame(raf);
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
     };
   });
 </script>

@@ -17,7 +17,11 @@ export default defineConfig({
     rehypePlugins: [rehypeKatex],
   },
   integrations: [
-    svelte(),
+    svelte({
+      compilerOptions: {
+        runes: false
+      }
+    }),
     icon(),
     swup({
       containers: ["#swup"],
