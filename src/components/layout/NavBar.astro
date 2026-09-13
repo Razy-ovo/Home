@@ -2,6 +2,19 @@
 // NavBar.astro — 导航栏
 
 import { site } from "../../data/site";
+
+const navItems = [
+  { href: '/', label: '首页' },
+  { href: '/about/', label: '关于' },
+  { href: '/projects/', label: '作品' },
+  { href: '/article/', label: '文章' },
+  { href: '/friends/', label: '友链' },
+  { href: '/contact/', label: '联系' },
+];
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
 <div class="nav-wrap">
@@ -13,12 +26,9 @@ import { site } from "../../data/site";
       <span></span>
     </button>
     <div class="nav-links">
-      <a href="/">首页</a>
-      <a href="/about/">关于</a>
-      <a href="/projects/">作品</a>
-      <a href="/article/">文章</a>
-      <a href="/friends/">友链</a>
-      <a href="/contact/">联系</a>
+      {navItems.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+      ))}
     </div>
   </nav>
 </div>
@@ -27,6 +37,20 @@ import { site } from "../../data/site";
   // 防止 Swup 导航时脚本重复执行导致 2N 个监听器相互抵消
   if (!window.__navMenuReady) {
     window.__navMenuReady = true;
+
+    // Swup 只替换 #swup 容器，导航栏常驻，需要在路由变化后手动同步高亮
+    const syncCurrent = () => {
+      const path = window.location.pathname;
+      document.querySelectorAll<HTMLAnchorElement>('.nav-links a').forEach((link) => {
+        const href = link.getAttribute('href') ?? '';
+        const active = href === '/' ? path === '/' : path.startsWith(href);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    syncCurrent();
+    document.addEventListener('swup:page:view', syncCurrent);
+    window.addEventListener('popstate', syncCurrent);
 
     function closeMenu(h, n) {
       if (h) { h.classList.remove('active'); h.setAttribute('aria-expanded', 'false'); }
@@ -118,7 +142,8 @@ import { site } from "../../data/site";
     transition: background .2s ease, color .2s ease;
   }
   .nav-links a:hover,
-  .nav-links a:focus-visible { color: #fff; background: rgba(255,255,255,.12); }
+  .nav-links a:focus-visible,
+  .nav-links a[aria-current="page"] { color: #fff; background: rgba(255,255,255,.12); }
   .hamburger {
     display: none;
     flex-direction: column;

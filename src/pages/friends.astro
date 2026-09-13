@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Icon } from 'astro-icon/components';
 import { friends } from '../data/friends';
 ---
 
@@ -15,8 +16,8 @@ import { friends } from '../data/friends';
         <article class="friend-card glass">
           <div class="friend-header">
             <div class="friend-avatar">
-              {friend.avatar.startsWith('fas-') ? (
-                <i class={`fa-solid ${friend.avatar.replace('fas-', 'fa-')}`}></i>
+              {friend.avatar.startsWith('icon:') ? (
+                <Icon name={friend.avatar.slice(5)} />
               ) : (
                 <img src={friend.avatar} alt={`${friend.name}的头像`} />
               )}
@@ -156,8 +157,9 @@ import { friends } from '../data/friends';
     object-fit: cover;
   }
 
-  .friend-avatar i {
-    font-size: 32px;
+  .friend-avatar :global(svg) {
+    width: 32px;
+    height: 32px;
     color: #a9c8ff;
   }
 
@@ -273,6 +275,29 @@ import { friends } from '../data/friends';
     font-size: 13px !important;
     word-break: break-all;
     text-align: center;
+  }
+
+  .copy-url-btn {
+    background: none;
+    border: none;
+    color: #a9c8ff;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all .2s ease;
+    word-break: break-all;
+    width: 100%;
+    text-align: center;
+  }
+
+  .copy-url-btn:hover {
+    background: rgba(169,200,255,.15);
+    color: #bfd9ff;
+  }
+
+  .copy-url-btn:active {
+    transform: scale(0.98);
   }
 
   .site-url a {

@@ -12,6 +12,8 @@ export interface SiteConfig {
   lang: string;
   /** 主题色 */
   colorScheme: 'dark' | 'light';
+  /** 正式站点域名（如 https://example.com），留空则不输出 canonical / og:url */
+  url: string;
 }
 
 export const site: SiteConfig = {
@@ -19,4 +21,5 @@ export const site: SiteConfig = {
   description: '星辰 Razy 的个人主页',
   lang: 'zh-CN',
   colorScheme: 'dark',
+  url: '',
 };

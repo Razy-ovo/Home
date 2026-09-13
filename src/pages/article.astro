@@ -32,22 +32,26 @@ const articleTitle = (entry: typeof articles[number]) => entry.data.title ?? ent
         {articles.map((article) => (
           <article class="article-card">
             <a href={`/article/${article.id}/`} class="card-link">
-              <div class="card-header">
-                <time class="article-date" datetime={article.data.pubDate?.toISOString()}>
-                  {article.data.pubDate?.toLocaleDateString('zh-CN', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </time>
-                {article.data.tags && article.data.tags.length > 0 && (
-                  <div class="article-tags">
-                    {article.data.tags.slice(0, 2).map((tag) => (
-                      <span class="tag">{tag}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
+              {(article.data.pubDate || (article.data.tags && article.data.tags.length > 0)) && (
+                <div class="card-header">
+                  {article.data.pubDate && (
+                    <time class="article-date" datetime={article.data.pubDate.toISOString()}>
+                      {article.data.pubDate.toLocaleDateString('zh-CN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  )}
+                  {article.data.tags && article.data.tags.length > 0 && (
+                    <div class="article-tags">
+                      {article.data.tags.slice(0, 2).map((tag) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               
               <h2 class="article-title">{articleTitle(article)}</h2>
               
@@ -367,6 +371,14 @@ const articleTitle = (entry: typeof articles[number]) => entry.data.title ?? ent
     
     .empty-state {
       padding: 60px 20px;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
     }
   }
 </style>

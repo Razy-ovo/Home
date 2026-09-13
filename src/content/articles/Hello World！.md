@@ -1,3 +1,10 @@
+---
+title: 'Hello World！'
+description: '一份用于测试 Markdown 渲染效果的综合文档，覆盖文本、列表、代码、表格、公式等常用语法。'
+tags: ['测试', 'Markdown']
+pubDate: 2026-09-13
+---
+
 # Markdown 测试文档
 
 这是一份用于测试 Markdown 渲染效果的综合文档。
@@ -81,7 +88,7 @@ console.log(greet("世界"));
 
 - 普通链接：[GitHub](https://github.com)
 - 带标题的链接：[Google](https://google.com "点击访问 Google")
-- 图片：![示例图片](https://via.placeholder.com/300x150/2a2a2a/e8c547?text=MiMo+Test)
+- 图片：![示例图片](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='300'%20height='150'%3E%3Crect%20width='300'%20height='150'%20fill='%232a2a2a'/%3E%3Ctext%20x='150'%20y='80'%20fill='%23e8c547'%20font-size='20'%20text-anchor='middle'%3EDemo%20Image%3C/text%3E%3C/svg%3E)
 
 ## 6. 数学公式（LaTeX）
 

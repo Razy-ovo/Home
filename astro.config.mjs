@@ -5,6 +5,7 @@ import icon from "astro-icon";
 import swup from "@swup/astro";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { remarkMark, remarkSubSuper } from "./src/lib/remark-plugins.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,15 +14,11 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkMark, remarkSubSuper],
     rehypePlugins: [rehypeKatex],
   },
   integrations: [
-    svelte({
-      compilerOptions: {
-        runes: false
-      }
-    }),
+    svelte(),
     icon(),
     swup({
       containers: ["#swup"],

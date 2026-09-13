@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { nickname, motto, socialLinks } from '../data/profile';
-import Clock from '../components/widgets/Clock.svelte';
+import { projects } from '../data/projects';
+import Clock from '../components/widgets/Clock.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
@@ -35,11 +36,11 @@ import { Icon } from 'astro-icon/components';
         </div>
       </div>
       <div class="right-col" aria-label="当前方向">
-        <section class="clock-card glass" aria-label="当前时间"><Clock client:load /></section>
+        <section class="clock-card glass" aria-label="当前时间"><Clock /></section>
         <div class="stats-grid">
           <article class="stat-card glass"><span>当前身份</span><strong>高中生</strong></article>
           <article class="stat-card glass"><span>当前技术</span><strong>Astro + Svelte</strong></article>
-          <article class="stat-card glass"><span>作品数量</span><strong>2 个</strong></article>
+          <article class="stat-card glass"><span>作品数量</span><strong>{projects.length} 个</strong></article>
         </div>
         <section class="quote-card glass"><p>在代码与星光之间，构筑无限可能。</p></section>
       </div>
@@ -73,7 +74,7 @@ import { Icon } from 'astro-icon/components';
   .project-link, .article-link { margin-left: 5px; color: #dbe8ff; font-size: 13px; font-weight: 650; }
   .article-link { color: rgba(214, 231, 255, .72); }
   .project-link span, .project-card b { margin-left: 5px; color: #a9c8ff; }
-  .clock-card { min-height: 136px; padding: 14px 20px; border-radius: 16px; }
+  .clock-card { min-height: 136px; padding: 14px 20px; border-radius: 16px; display: flex; align-items: center; justify-content: flex-start; }
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .stat-card { min-height: 104px; padding: 17px; border-radius: 14px; }
   .stat-card span { display: block; color: rgba(242,245,251,.48); font-size: 11px; }

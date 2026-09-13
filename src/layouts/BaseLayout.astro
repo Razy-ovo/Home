@@ -18,6 +18,7 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} - ${site.name}` : site.name;
+const canonicalUrl = site.url ? new URL(Astro.url.pathname, site.url).href : undefined;
 ---
 
 <!doctype html>
@@ -27,19 +28,29 @@ const pageTitle = title ? `${title} - ${site.name}` : site.name;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content={site.colorScheme} />
+    <meta name="theme-color" content="#060912" />
     <title>{pageTitle}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="zh_CN" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <slot name="head" />
   </head>
   <body>
 
     <div class="bg-layer" aria-hidden="true"></div>
-    <div class="page">
-      <NavBar />
-      <main class="hero transition-main" id="swup">
-        <slot />
-      </main>
-      <Footer />
+    <div class="scroll-root" data-swup-scroll-container>
+      <div class="page">
+        <NavBar />
+        <main class="hero transition-main" id="swup">
+          <slot />
+        </main>
+        <Footer />
+      </div>
     </div>
   </body>
 </html>
@@ -57,12 +68,34 @@ const pageTitle = title ? `${title} - ${site.name}` : site.name;
       if (visitBtn) {
         const url = visitBtn.dataset.url;
         const name = visitBtn.dataset.name;
-        if (url && name && dialog) {
+        if (url && name && dialog && /^https?:\/\//i.test(url)) {
           pendingUrl = url;
           const targetSite = document.getElementById('target-site');
           const siteUrl = document.getElementById('site-url');
           if (targetSite) targetSite.textContent = name;
-          if (siteUrl) siteUrl.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+          if (siteUrl) {
+            siteUrl.replaceChildren();
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = url;
+            copyBtn.className = 'copy-url-btn';
+            copyBtn.title = '点击复制链接';
+            copyBtn.onclick = async () => {
+              try {
+                await navigator.clipboard.writeText(url);
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ 已复制';
+                copyBtn.style.color = '#10b981';
+                setTimeout(() => {
+                  copyBtn.textContent = originalText;
+                  copyBtn.style.color = '';
+                }, 1500);
+              } catch {
+                copyBtn.textContent = '复制失败';
+                setTimeout(() => { copyBtn.textContent = url; }, 1500);
+              }
+            };
+            siteUrl.append(copyBtn);
+          }
           dialog.showModal();
         }
         return;
@@ -89,11 +122,83 @@ const pageTitle = title ? `${title} - ${site.name}` : site.name;
       }
     });
   }
+
+  // 首页时钟：脚本在 #swup 外，Swup 换页后每帧重新查找 DOM
+  if (!window.__clockReady) {
+    window.__clockReady = true;
+    let lastSecond = -1;
+    let rafId = 0;
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const setRotate = (el: Element | null, deg: number) => {
+      if (el instanceof SVGElement) el.style.transform = `rotate(${deg}deg)`;
+    };
+
+    const tick = () => {
+      const root = document.querySelector('[data-clock]');
+      if (root) {
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        const ms = now.getMilliseconds();
+        setRotate(root.querySelector('.clock-hour'), (h % 12) * 30 + m * 0.5 + s / 120 + ms / 120000);
+        setRotate(root.querySelector('.clock-minute'), m * 6 + s * 0.1 + ms / 60000);
+        setRotate(root.querySelector('.clock-second'), s * 6 + ms * 0.006);
+        if (s !== lastSecond) {
+          lastSecond = s;
+          const timeEl = root.querySelector('.clock-time');
+          const dateEl = root.querySelector('.clock-date');
+          if (timeEl) timeEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+          if (dateEl) dateEl.textContent = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())}`;
+        }
+      } else {
+        lastSecond = -1;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    window.addEventListener('beforeunload', () => cancelAnimationFrame(rafId));
+  }
+
+  // 内部滚动容器：视口不滚动，页面在 .scroll-root 里滚，滚动条画在背景之上
+  if (!window.__scrollRootReady) {
+    window.__scrollRootReady = true;
+    let popstateHref: string | null = null;
+
+    // 后退/前进时记录目标地址，让 swup scroll-plugin 恢复滚动位置而不是回顶
+    window.addEventListener('popstate', () => {
+      popstateHref = window.location.href;
+    });
+
+    // 正常导航（非后退/前进）后回到顶部
+    document.addEventListener('swup:page:view', () => {
+      const root = document.querySelector('.scroll-root');
+      if (root && popstateHref !== window.location.href) root.scrollTop = 0;
+      popstateHref = null;
+    });
+
+    // 页内锚点：视口不滚动，需要手动滚动内部容器
+    document.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const hash = anchor.getAttribute('href') ?? '';
+      const id = decodeURIComponent(hash.slice(1));
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView();
+      history.pushState(null, '', `#${id}`);
+    });
+  }
 </script>
 
 <style is:global>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: #060912; }
-  .page { min-height: 100svh; height: auto; }
-  .bg-layer { background: linear-gradient(180deg, rgba(4, 7, 13, .26), rgba(4, 7, 13, .73)), url('https://images.unsplash.com/photo-1522124624696-7ea32eb9592c?auto=format&fit=crop&w=2400&q=82') center / cover no-repeat; }
+  .bg-layer { background: linear-gradient(180deg, rgba(4, 7, 13, .26), rgba(4, 7, 13, .73)), url('/background.jpg') center / cover no-repeat; }
   .bg-layer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, rgba(3, 5, 10, .54), transparent 56%), linear-gradient(0deg, rgba(3, 5, 10, .65), transparent 36%); }
+  /* 视口锁定：页面滚动全部发生在 .scroll-root 内 */
+  html, body { height: 100%; overflow: hidden; }
 </style>

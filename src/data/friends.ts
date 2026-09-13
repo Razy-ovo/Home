@@ -10,7 +10,7 @@ export interface Friend {
   description: string;
   /** 站点链接 */
   url: string;
-  /** 站点图标/头像 URL，或 fas 图标名称（如 'fas-link'） */
+  /** 头像图片 URL，或 astro-icon 图标名（如 'icon:fa6-solid:link'） */
   avatar: string;
 }
 
@@ -20,11 +20,5 @@ export const friends: Friend[] = [
     description: '阅己 越己 悦己',
     url: 'https://ym.2v.nz/',
     avatar: 'https://ym.2v.nz/images/favicon.png',
-  },
-  {
-    name: '示例站点',
-    description: '这是一个示例友情链接站点',
-    url: 'https://example.com',
-    avatar: 'fas-link',
   },
 ];

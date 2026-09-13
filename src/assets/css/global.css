@@ -15,12 +15,42 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* 恒定预留滚动条：短页面也占位，切页时内容不左右跳动（轨道透明，视觉上不可见） */
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+/* 不支持 scrollbar-width 的旧浏览器回退：自定义细滚动条 */
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 body {
   color: var(--color-text);
   line-height: 1.6;
   min-height: 100vh;
+  overflow: hidden;
+}
+
+/* 内部滚动容器 */
+.scroll-root {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
@@ -69,7 +99,7 @@ ol {
 .page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100svh;
   position: relative;
 }
 

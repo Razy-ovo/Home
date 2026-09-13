@@ -139,7 +139,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
       const requestUrl = `${PUSH_API}?title=${encodeURIComponent(title)}&content=${encodeURIComponent(message)}&_t=${Date.now()}`;
       fetch(requestUrl, { method: 'GET', mode: 'no-cors', keepalive: true })
         .then(() => {
-        status.textContent = '信号已送达，谢谢你的留言。';
+        status.textContent = '信号已提交，我会尽快查看。';
         status.className = 'form-status success';
         form.reset();
         charHint.textContent = '0 / 1000';
