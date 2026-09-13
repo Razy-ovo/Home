@@ -21,27 +21,42 @@ document.addEventListener('click', (e) => {
       if (targetSite) targetSite.textContent = name;
       if (siteUrl) {
         siteUrl.replaceChildren();
+
+        const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+        const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
         const copyBtn = document.createElement('button');
-        copyBtn.textContent = url;
+        copyBtn.type = 'button';
         copyBtn.className = 'copy-url-btn';
         copyBtn.title = '点击复制链接';
+        copyBtn.setAttribute('aria-label', `复制链接 ${url}`);
+        copyBtn.innerHTML = `
+          <span class="copy-url-icon">${ICON_COPY}</span>
+          <span class="copy-url-text"></span>
+          <span class="copy-url-hint">${ICON_COPY}<span>复制</span></span>
+        `;
+        (copyBtn.querySelector('.copy-url-text') as HTMLElement).textContent = url;
+
+        const hint = copyBtn.querySelector('.copy-url-hint') as HTMLElement;
+        const originalHint = hint.innerHTML;
+        let resetTimer: ReturnType<typeof setTimeout>;
+
         copyBtn.addEventListener('click', async () => {
           try {
             await navigator.clipboard.writeText(url);
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = '✓ 已复制';
-            copyBtn.style.color = '#10b981';
-            setTimeout(() => {
-              copyBtn.textContent = originalText;
-              copyBtn.style.color = '';
-            }, 1500);
+            copyBtn.classList.add('copied');
+            hint.innerHTML = `${ICON_CHECK}<span>已复制</span>`;
           } catch {
-            copyBtn.textContent = '复制失败';
-            setTimeout(() => {
-              copyBtn.textContent = url;
-            }, 1500);
+            copyBtn.classList.add('failed');
+            hint.innerHTML = `<span>复制失败</span>`;
           }
+          clearTimeout(resetTimer);
+          resetTimer = setTimeout(() => {
+            copyBtn.classList.remove('copied', 'failed');
+            hint.innerHTML = originalHint;
+          }, 1600);
         });
+
         siteUrl.append(copyBtn);
       }
       dialog.showModal();
