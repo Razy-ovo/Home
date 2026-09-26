@@ -19,6 +19,11 @@ import { projects } from '../data/projects';
             <div class="work-tags">
               {project.tags.map((tag) => <span class="tag">{tag}</span>)}
             </div>
+            {project.url && (
+              <a class="project-link" href={project.url} target="_blank" rel="noreferrer">
+                访问项目 <span aria-hidden="true">↗</span>
+              </a>
+            )}
           </div>
         </article>
       ))}
