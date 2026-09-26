@@ -129,6 +129,26 @@ import { projects } from '../data/projects';
     margin-top: 2px;
   }
 
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    width: max-content;
+    color: #dce8ff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .project-link span {
+    color: #a9c8ff;
+    transition: transform .2s ease;
+  }
+
+  .project-link:hover span {
+    transform: translate(2px, -2px);
+  }
+
   .tag {
     padding: 4px 11px;
     border-radius: 6px;
