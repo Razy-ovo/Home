@@ -12,6 +12,8 @@ export interface Project {
   description: string;
   /** 功能 / 技术标签 */
   tags: string[];
+  /** 项目地址 */
+  url?: string;
 }
 
 export const projects: Project[] = [
@@ -20,6 +22,7 @@ export const projects: Project[] = [
     nameSuffix: '- Chat',
     description: '自己写的 AI 聊天应用，可以接入大模型 API，支持聊天和生成图片。',
     tags: ['AI 对话', '图片生成'],
+    url: 'https://chat.xcov.cn',
   },
   {
     name: 'Razy',

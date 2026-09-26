@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # 编辑器配置文件夹
 .cursor/
+
+# TRAE 工作区配置（本地专用技能等）
+.trae/
