@@ -18,7 +18,7 @@ export interface SiteConfig {
 
 export const site: SiteConfig = {
   name: '星辰 / Razy',
-  description: '记录学习所见，分享技术笔记与项目经验。',
+  description: '星辰 Razy 的个人主页',
   lang: 'zh-CN',
   colorScheme: 'dark',
   url: '',

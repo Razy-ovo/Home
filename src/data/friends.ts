@@ -17,7 +17,7 @@ export interface Friend {
 export const friends: Friend[] = [
   {
     name: '羽毛的小屋',
-    description: '阅己 越己 悦己',
+    description: '记录学习所见，分享技术笔记与项目经验。',
     url: 'https://ym.2v.nz/',
     avatar: 'https://ym.2v.nz/images/favicon.png',
   },
