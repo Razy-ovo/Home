@@ -16,12 +16,12 @@
 
 /* ---- 玻璃卡片 ---- */
 .glass {
-  background: transparent;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: none;
+  background: var(--glass-background);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: var(--glass-shadow);
 }
 
 /* 玻璃圆形按钮 */

@@ -30,15 +30,16 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
   color: var(--color-text);
+  background: #060912;
   line-height: 1.6;
   min-height: 100vh;
-  background: #060912;
 }
 
 /* 内部滚动容器：视口锁定，页面滚动全部发生在这里 */
 .scroll-root {
   position: fixed;
   inset: 0;
+  z-index: 1;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -125,6 +126,7 @@ ol {
   pointer-events: none;
   background:
     linear-gradient(180deg, rgba(4, 7, 13, .26), rgba(4, 7, 13, .73)),
+    var(--remote-background, url('https://imgapi.cn/api.php?fl=fengjing&zd=pc')) center / cover no-repeat,
     url('/background.jpg') center / cover no-repeat;
 }
 
@@ -157,18 +159,15 @@ ol {
   .hero { padding: 120px 0 80px; }
 }
 
-/* Swup page transition: the fixed navigation and background remain in place. */
+/* Swup page transition: keep the existing parent fade without moving glass cards. */
 #swup.transition-main {
   opacity: 1;
-  transform: translateY(0);
 }
 
 html.is-changing #swup.transition-main {
-  transition: opacity .42s cubic-bezier(.22, 1, .36, 1), transform .42s cubic-bezier(.22, 1, .36, 1);
+  transition: opacity .24s ease;
 }
 
 html.is-animating #swup.transition-main {
   opacity: 0;
-  transform: translateY(10px);
 }
-
