@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const avatar = 'https://q.qlogo.cn/headimg_dl?dst_uin=179097240&spec=640&img_type=jpg';
 ---
 
-<BaseLayout title="关于">
+<BaseLayout title="关于" description="了解星辰 Razy：一名持续学习网页制作、交互设计和 AI 应用的个人开发者。">
   <div class="inner-page about-page">
     <section class="about-hero">
       <header class="page-heading">
@@ -15,7 +15,7 @@ const avatar = 'https://q.qlogo.cn/headimg_dl?dst_uin=179097240&spec=640&img_typ
       </header>
 
       <aside class="identity glass" aria-label="个人信息">
-        <div class="avatar-wrap"><img src={avatar} alt="星辰的头像" /></div>
+        <div class="avatar-wrap"><img src={avatar} alt="星辰的头像" width="90" height="90" decoding="async" /></div>
         <div class="identity-copy">
           <small>PERSONAL PROFILE</small>
           <h2>星辰 <span>/ Razy</span></h2>

@@ -6,7 +6,7 @@ const email = 'razy-ovo@outlook.com';
 const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
 ---
 
-<BaseLayout title="联系">
+<BaseLayout title="联系" description="通过邮箱、QQ 或联系表单与星辰 Razy 交流网页制作、工具和 AI 想法。">
   <div class="inner-page contact-page">
     <div class="contact-layout">
       <section class="contact-side" aria-labelledby="contact-title">
@@ -17,7 +17,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
         </header>
 
         <div class="contact-list">
-          <a class="contact-item glass" href={`mailto:${email}`}>
+          <a class="contact-item glass" href={`mailto:${email}`} aria-label={`发送邮件到 ${email}`}>
             <span class="contact-icon"><Icon name="fa6-solid:envelope" /></span>
             <span class="contact-copy">
               <small>邮箱</small>
@@ -25,7 +25,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
             </span>
             <span class="contact-arrow" aria-hidden="true">↗</span>
           </a>
-          <a class="contact-item glass" href={qqUrl} target="_blank" rel="noreferrer">
+          <a class="contact-item glass" href={qqUrl} target="_blank" rel="noopener noreferrer" aria-label="打开 QQ 联系页面">
             <span class="contact-icon"><Icon name="fa6-brands:qq" /></span>
             <span class="contact-copy">
               <small>QQ</small>
@@ -55,6 +55,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
         <p class="signal-intro">把来意、联系方式和想说的话写进信号舱，我会收到后认真查看。</p>
 
         <form class="signal-form" id="signalForm">
+          <label class="trap-field" aria-hidden="true">不要填写此项<input name="website" tabindex="-1" autocomplete="off" /></label>
           <div class="form-row">
             <label>
               <span>信号标题 <b>*</b></span>
@@ -68,11 +69,11 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
           <div class="form-row">
             <label>
               <span>邮箱</span>
-              <input id="pushEmail" name="email" type="email" maxlength="100" placeholder="name@example.com" />
+              <input id="pushEmail" name="email" type="email" maxlength="100" autocomplete="email" placeholder="name@example.com" />
             </label>
             <label>
               <span>QQ / 微信 / 其他</span>
-              <input id="pushContact" name="contact" type="text" maxlength="80" placeholder="至少填写一种联系方式" />
+              <input id="pushContact" name="contact" type="text" maxlength="80" autocomplete="off" placeholder="至少填写一种联系方式" />
             </label>
           </div>
           <label>
@@ -101,8 +102,10 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
   const charHint = document.querySelector('#charHint');
   const status = document.querySelector('#pushStatus');
   const button = document.querySelector('#pushBtn');
+  const trapInput = form?.querySelector<HTMLInputElement>('input[name="website"]');
+  let lastSubmitAt = 0;
 
-  if (form && titleInput && nameInput && emailInput && contactInput && contentInput && charHint && status && button) {
+  if (form && titleInput && nameInput && emailInput && contactInput && contentInput && charHint && status && button && trapInput) {
     contentInput.addEventListener('input', () => {
       charHint.textContent = `${contentInput.value.length} / 1000`;
     });
@@ -114,6 +117,14 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
       const emailValue = emailInput.value.trim();
       const contact = contactInput.value.trim();
       const content = contentInput.value.trim();
+      const now = Date.now();
+
+      if (trapInput.value) return;
+      if (now - lastSubmitAt < 30_000) {
+        status.textContent = '请稍等 30 秒后再发送。';
+        status.className = 'form-status error';
+        return;
+      }
 
       if (!title || !name || !content) {
         status.textContent = '请先填写带 * 的内容。';
@@ -126,6 +137,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
         return;
       }
 
+      lastSubmitAt = now;
       button.disabled = true;
       status.textContent = '正在发送信号...';
       status.className = 'form-status';
@@ -139,7 +151,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
       const requestUrl = `${PUSH_API}?title=${encodeURIComponent(title)}&content=${encodeURIComponent(message)}&_t=${Date.now()}`;
       fetch(requestUrl, { method: 'GET', mode: 'no-cors', keepalive: true })
         .then(() => {
-        status.textContent = '信号已提交，我会尽快查看。';
+        status.textContent = '请求已发出，请留意是否收到回复；如无回应请直接发邮件。';
         status.className = 'form-status success';
         form.reset();
         charHint.textContent = '0 / 1000';
@@ -156,6 +168,7 @@ const qqUrl = 'https://qm.qq.com/q/1oIg7qIYzm';
 
 <style>
   .inner-page { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+  .trap-field { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .contact-page { padding-top: 12px; }
   .contact-layout { display: grid; grid-template-columns: minmax(280px, .78fr) minmax(420px, 1.22fr); gap: 18px; align-items: start; }
   .contact-side { display: grid; gap: 14px; }

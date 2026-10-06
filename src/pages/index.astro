@@ -6,12 +6,12 @@ import Clock from '../components/widgets/Clock.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
-<BaseLayout title="首页">
+<BaseLayout title="首页" description="星辰 Razy 的个人主页，分享网页作品、AI 探索和学习记录。">
   <div class="home" id="home">
     <section class="main-grid" aria-labelledby="hero-title">
       <div class="left-col">
         <div class="identity-row">
-          <div class="avatar-ring"><img src="https://q.qlogo.cn/headimg_dl?dst_uin=179097240&amp;spec=640&amp;img_type=jpg" alt="星辰的头像" /></div>
+          <div class="avatar-ring"><img src="https://q.qlogo.cn/headimg_dl?dst_uin=179097240&amp;spec=640&amp;img_type=jpg" alt="星辰的头像" width="96" height="96" decoding="async" /></div>
           <div>
             <p class="eyebrow">PERSONAL SPACE</p>
             <h1 id="hero-title">{nickname} <small>/ Razy</small></h1>
@@ -27,7 +27,7 @@ import { Icon } from 'astro-icon/components';
         </div>
         <div class="social-row" aria-label="联系方式">
           {socialLinks.map((link) => (
-            <a href={link.url} class="glass-btn" title={link.label} target={link.url.startsWith('mailto:') ? undefined : '_blank'} rel="noopener">
+            <a href={link.url} class="glass-btn" title={link.label} aria-label={link.label === '邮箱' ? '发送邮件' : '打开 QQ 联系页面'} target={link.url.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer">
               {link.label === '邮箱' ? <Icon name="fa6-solid:envelope" /> : <Icon name="fa6-brands:qq" />}
             </a>
           ))}

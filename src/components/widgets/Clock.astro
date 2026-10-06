@@ -19,7 +19,7 @@
   </svg>
 
   <div class="clock-info">
-    <span class="clock-time" aria-live="polite">--:--:--</span>
+    <span class="clock-time">--:--:--</span>
     <span class="clock-date">----/--/--</span>
   </div>
 </div>
@@ -46,6 +46,14 @@
   .clock-minute,
   .clock-second {
     transform-origin: 12px 12px;
+  }
+  .clock-second.running {
+    animation: second-rotation 60s linear infinite;
+    animation-delay: var(--second-delay, 0s);
+  }
+  @keyframes second-rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   .clock-info {
     display: flex;

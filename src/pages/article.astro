@@ -8,7 +8,7 @@ const articles = (await getCollection('articles', ({ data }) => !data.draft))
 const articleTitle = (entry: typeof articles[number]) => entry.data.title ?? entry.id.split('/').at(-1)?.replace(/[-_]/g, ' ') ?? '未命名文章';
 ---
 
-<BaseLayout title="文章">
+<BaseLayout title="文章" description="星辰 Razy 的技术文章、网页制作记录和 Markdown 学习笔记。">
   <section class="articles-page">
     <header class="page-header">
       <a href="/" class="back-link">

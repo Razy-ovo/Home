@@ -81,7 +81,7 @@ document.addEventListener('click', (e) => {
 
   // 点击遮罩区域关闭弹窗
   if (e.target === dialog) {
-    dialog.close();
+    dialog?.close();
     pendingUrl = '';
   }
 });

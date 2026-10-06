@@ -19,6 +19,10 @@ body {
 }
 
 html {
+  overscroll-behavior-y: none;
+}
+
+html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -37,6 +41,8 @@ body {
   inset: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
 }

@@ -18,8 +18,8 @@ export interface SiteConfig {
 
 export const site: SiteConfig = {
   name: '星辰 / Razy',
-  description: '星辰 Razy 的个人主页',
+  description: '星辰 Razy 的个人主页，记录网页制作、AI 探索和个人开发作品。',
   lang: 'zh-CN',
   colorScheme: 'dark',
-  url: '',
+  url: 'https://xcov.cn',
 };
