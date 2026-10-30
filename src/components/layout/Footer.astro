@@ -1,9 +1,12 @@
 ---
 // Footer.astro — 页脚组件
+import IcpBeian from '../IcpBeian.astro';
 ---
 
 <footer class="site-footer">
   <p>基于 <a href="https://github.com/yumaonb/Alula" target="_blank" rel="noreferrer">Alula</a> 二改</p>
+  <!-- 备案号：仅在已备案域名（razy.cykxx.cn 及其子域名）访问时显示 -->
+  <IcpBeian />
 </footer>
 
 <style>

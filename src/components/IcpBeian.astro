@@ -1,0 +1,106 @@
+---
+// IcpBeian.astro — 备案号展示组件
+//
+// 背景：同一份静态构建产物同时部署到两个 CDN（阿里云 ESA 无备案域名 / 腾讯云 EO 已备案域名）。
+// GitHub Pages 无法按访问域名返回不同 HTML，构建期也拿不到真实访问域名（Astro.url 是配置里的固定值），
+// 因此必须在浏览器端用 window.location.hostname 运行时判断。
+//
+// 行为：
+//   - 访问已备案域名（razy.cykxx.cn 及其子域名，如 www.razy.cykxx.cn）→ 显示备案号并链接工信部备案系统
+//   - 访问其他域名（如阿里云 ESA 的无备案域名）→ 元素保持 hidden，页面上不渲染备案号
+//
+// 说明：备案号文本仍存在于 HTML 源码中（仅 hidden 不显示）。
+// 若要求「源码里也完全不含备案号」，请使用文件末尾备注的构建期环境变量方案。
+
+interface Props {
+  /** 已备案域名（不含协议、不含端口） */
+  domain?: string;
+  /** 备案号 */
+  record?: string;
+  /** 工信部备案查询链接 */
+  link?: string;
+}
+
+const {
+  domain = 'razy.cykxx.cn',
+  record = '冀ICP备2026047708号-1',
+  link = 'https://beian.miit.gov.cn/',
+} = Astro.props;
+---
+
+<!-- 默认 hidden：不匹配域名时完全不显示，避免「先显示再隐藏」的闪烁 -->
+<p class="icp-beian" hidden>
+  <a href={link} target="_blank" rel="noopener noreferrer">{record}</a>
+</p>
+
+<!--
+  define:vars 把 domain / record / link 内联进脚本，脚本内不硬编码这些值，方便以后修改。
+  内联脚本不是 ES module，按普通脚本执行，因此不使用 TypeScript 语法。
+-->
+<script define:vars={{ domain, record, link }}>
+  (() => {
+    // 运行时按当前访问域名决定是否展示备案号
+    const apply = () => {
+      const el = document.querySelector('.icp-beian');
+      if (!el) return;
+
+      const host = window.location.hostname.toLowerCase();
+      const target = String(domain).toLowerCase();
+
+      // 同时覆盖 razy.cykxx.cn 与 www.razy.cykxx.cn 这类子域名
+      // 用 host === target || host.endsWith('.' + target) 避免 razy.cykxx.cn.attacker.com 误匹配
+      const matched = host === target || host.endsWith('.' + target);
+
+      // 不匹配时保持 hidden，页面上不渲染备案号
+      el.hidden = !matched;
+      if (!matched) return;
+
+      // 备案号 / 备案链接以 define:vars 传入的值为准，避免脚本里硬编码
+      const a = el.querySelector('a');
+      if (!a) return;
+      a.setAttribute('href', link);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.textContent = record;
+    };
+
+    // 首次加载：脚本紧跟元素之后，解析时即可执行
+    apply();
+
+    // Swup（本项目 @swup/astro）站内跳转后重新确认一次。
+    // Footer 在 #swup 容器外不会被替换，这里作为兜底。
+    document.addEventListener('swup:page:load', apply);
+    document.addEventListener('swup:page:view', apply);
+
+    // 若将来改用 Astro <ClientRouter />（View Transitions），同样需要重新执行
+    document.addEventListener('astro:page-load', apply);
+  })();
+</script>
+
+<style>
+  /* 确保 hidden 不被其他 display 规则覆盖 */
+  .icp-beian[hidden] {
+    display: none !important;
+  }
+</style>
+
+<!--
+【备选方案：两个 CDN 各自独立构建时】
+
+若部署流程是「ESA 和 EO 分别构建一次」，可以直接在构建期把文本彻底去掉（HTML 源码里也没有）：
+
+  ---
+  // 组件 frontmatter
+  const showBeian = import.meta.env.PUBLIC_SHOW_BEIAN === 'true';
+  ---
+  {showBeian && (
+    <p class="icp-beian">
+      <a href={link} target="_blank" rel="noopener noreferrer">{record}</a>
+    </p>
+  )}
+
+EO 构建：PUBLIC_SHOW_BEIAN=true pnpm build
+ESA 构建：pnpm build（默认不含备案号，源码中完全没有该文本）
+
+适用条件：两次构建、两份独立产物；否则（一次构建推两份）必须用本组件的运行时方案。
+-->
